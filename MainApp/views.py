@@ -42,8 +42,6 @@ def customers_list(request):
             'nextlink': '/api/customers/?page=' + str(nextPage),  # Ссылка на следующуу страницу
             'prevlink': '/api/customers/?page=' + str(prevPage)  # Ссылка на предыдущюю страницу
         }
-        print('NEXTLINK: ', context['nextlink'])
-        print('PREVLINK: ', context['prevlink'])
         return Response(context)
     elif request.method == 'POST':
         serializer = CustomerSerializer(data=request.data)  # Десериализация данных
@@ -56,6 +54,7 @@ def customers_list(request):
 def customer_detail(request, pk):
     """
         Представление взятия, обновления и удаления пользователя по первичному ключу
+        request.data = {'pk': pk, 'first_name': '...', 'last_name': '...', 'email': '...', 'phone': '0', 'address': '...', 'description': '...'}
     """
     try:
         customer = Customer.objects.get(pk=pk)
@@ -66,7 +65,6 @@ def customer_detail(request, pk):
         serializer = CustomerSerializer(customer, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
     elif request.method == 'PUT':
-        print(request.data)
         serializer = CustomerSerializer(customer, data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
